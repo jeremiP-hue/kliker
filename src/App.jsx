@@ -1,95 +1,38 @@
-import { useEffect, useState } from "react";
-import "./App.css";
+import { useState, useEffect } from "react";
+import GameView from "./GameView";
 
-let clicery = []; // Tablica przechowująca intervale auto-klikerów
-
-function App() {
-  // ===== STATE =====
+const App = () => {
+  // ===================== KLIKACZ =====================
   const [klikniecia, setKlikniecia] = useState(0);
   const [bonusKlik, setBonusKlik] = useState(0);
   const [mieso, setMieso] = useState(0);
+
   const [zubry, setZubry] = useState([]);
   const [boczek, setBoczek] = useState([]);
-  const [tytl, setTytl] = useState("kliknij 🦬");
-  const [czas, setCzas] = useState(0);
-  const [clicey, setclicey] = useState([]);
 
-  const [ulepszKlikertak, setUleprzklikertak] = useState("absolute");
+  const [tytl, setTytl] = useState("Kliknij 🦬");
 
   const [koszt1, setKoszt1] = useState(100);
   const [koszt3, setKoszt3] = useState(500);
   const [koszt4, setKoszt4] = useState(10000);
   const [koszt5, setKoszt5] = useState(50000);
   const [koszt7, setKoszt7] = useState(1000);
-  const [kosztboczek, setKosztBoczek] = useState(300);
-
+  const [kosztBoczek, setKosztBoczek] = useState(300);
   const [poziomKlikera, setPoziomKlikera] = useState(1000);
+  const [stoZubrowAktywny, setStoZubrowAktywny] = useState(false);
 
-  // ===== PODSTAWOWE KLIKANIE =====
-  const dodajKlik = () => {
-    setKlikniecia(k => k + 1 + bonusKlik);
-  };
+  // ===================== GIEŁDA =====================
+  const [cena, setCena] = useState(10);
+  const [zuberki, setZuberki] = useState(0);
 
-  // ===== ŻUBER =====
-  const dodajZubra = () => {
-    setZubry(z => [
-      ...z,
-      {
-        id: Math.random(),
-        x: Math.random() * 80,
-        y: Math.random() * 80,
-      },
-    ]);
-  };
+  // ===================== FUNKCJE =====================
+  const dodajKlik = () => setKlikniecia(k => k + 1 + bonusKlik);
 
-  // ===== BOCZEK =====
-  const dodajBoczek = () => {
-    setBoczek(b => [
-      ...b,
-      {
-        id: Math.random(),
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-      },
-    ]);
-  };
+  const dodajZubra = () =>
+    setZubry(z => [...z, { id: Math.random(), x: Math.random() * 80, y: Math.random() * 80 }]);
+  const dodajBoczek = () =>
+    setBoczek(b => [...b, { id: Math.random(), x: Math.random() * 80, y: Math.random() * 80 }]);
 
-  // ===== ANIMACJE =====
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setBoczek(b =>
-        b.map(bo => ({
-          ...bo,
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-        }))
-      );
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setZubry(z =>
-        z.map(zu => ({
-          ...zu,
-          x: Math.random() * 80,
-          y: Math.random() * 80,
-        }))
-      );
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // ===== CZAS =====
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCzas(c => c + 0.1);
-    }, 100);
-    return () => clearInterval(timer);
-  }, []);
-
-  // ===== SKLEP =====
   const kupBonusKlik = () => {
     if (klikniecia >= koszt1) {
       setKlikniecia(k => k - koszt1);
@@ -98,7 +41,7 @@ function App() {
     }
   };
 
-  const kupZubra = () => {
+  const kupZubraKlik = () => {
     if (klikniecia >= 150) {
       setKlikniecia(k => k - 150);
       dodajZubra();
@@ -113,148 +56,140 @@ function App() {
     }
   };
 
-  const wykonajClicer = () => {
-    const id = setInterval(() => {
-      setKlikniecia(k => k + 1 + bonusKlik);
-    }, poziomKlikera);
-    clicery.push(id);
-  };
-
   const autoKliker = () => {
     if (klikniecia >= koszt4) {
       setKlikniecia(k => k - koszt4);
       setKoszt4(k => k + 300);
-      setclicey(c => [...c, "a"]);
-      wykonajClicer();
+      setInterval(() => setKlikniecia(k => k + 1 + bonusKlik), poziomKlikera);
     }
   };
 
-  // ===== Ulepsz kliker z dynamicznym position =====
   const ulepszKliker = () => {
-    if (klikniecia >= koszt7) {
+    if (klikniecia >= koszt7 && poziomKlikera > 50) {
       setKlikniecia(k => k - koszt7);
       setKoszt7(k => k + 1000);
-
-      setPoziomKlikera(p => {
-        if (p <= 50) {
-          setUleprzklikertak("none"); // zmiana position przycisku po osiągnięciu limitu
-          return p;
-        }
-        return p - 50;
-      });
-
-      // restart auto-klikerów
-      clicery.forEach(id => clearInterval(id));
-      clicery = [];
-      clicey.forEach(() => wykonajClicer());
+      setPoziomKlikera(p => p - 50);
     }
   };
 
   const stoZubrow = () => {
-    if (klikniecia >= koszt5) {
+    if (klikniecia >= koszt5 && !stoZubrowAktywny) {
       setKlikniecia(k => k - koszt5);
       setKoszt5(k => k + 10000);
-      setInterval(() => {
-        for (let i = 0; i < 100; i++) dodajZubra();
-      }, 60000);
+      setStoZubrowAktywny(true);
     }
   };
+
+  useEffect(() => {
+    if (!stoZubrowAktywny) return;
+    const timer = setInterval(() => {
+      for (let i = 0; i < 100; i++) dodajZubra();
+    }, 60000);
+    return () => clearInterval(timer);
+  }, [stoZubrowAktywny]);
 
   const usunZubry = () => {
     setMieso(m => m + zubry.length * 10);
     setZubry([]);
   };
-
-  const usunBoczek = () => {
-    setBonusKlik(b => b + boczek.length);
-    setBoczek([]);
-  };
-
   const zamienMieso = () => {
     setKlikniecia(k => k + mieso * 16);
     setMieso(0);
   };
-
   const kupBoczek = () => {
-    if (mieso >= kosztboczek) {
-      setMieso(m => m - kosztboczek);
+    if (mieso >= kosztBoczek) {
+      setMieso(m => m - kosztBoczek);
       setKosztBoczek(k => k + 20);
       setBonusKlik(b => b + 2);
       dodajBoczek();
     }
   };
+  const usunBoczek = () => {
+    setBonusKlik(b => b + boczek.length);
+    setBoczek([]);
+  };
 
-  // ===== RENDER =====
+  // ===================== GIEŁDA =====================
+  const kupZubraGielda = () => {
+    if (klikniecia >= cena) {
+      setKlikniecia(k => k - cena);
+      setZuberki(z => z + 1);
+    } else alert("Za mało kliknięć na zakup żubra!");
+  };
+
+  const sprzedajZubraGielda = () => {
+    if (zuberki > 0) {
+      setZuberki(z => z - 1);
+      setKlikniecia(k => k + cena);
+    } else alert("Nie masz żubrów do sprzedaży!");
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => setCena(c => Math.max(1, c + (Math.random() < 0.5 ? -1 : 1))), 200);
+    return () => clearInterval(timer);
+  }, []);
+
+  // ===================== RUCH ŻUBRÓW I BOCZKÓW =====================
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setZubry(z =>
+        z.map(zz => ({
+          ...zz,
+          x: Math.random() * 80,
+          y: Math.random() * 80,
+        }))
+      );
+      setBoczek(b =>
+        b.map(bb => ({
+          ...bb,
+          x: Math.random() * 80,
+          y: Math.random() * 80,
+        }))
+      );
+    }, 2000); // co 2 sekundy losowa pozycja
+    return () => clearInterval(timer);
+  }, []);
+
+  // ===================== WYGRANA =====================
+useEffect(() => {
+  if (klikniecia >= 1_000_000_000 && mieso >= 200_000) {
+    alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
+  }
+}, [klikniecia, mieso]);
+
+
   return (
-    <div className="app">
-      {boczek.map(z => (
-        <span
-          key={z.id}
-          style={{
-            position: "absolute",
-            left: `${z.x}%`,
-            top: `${z.y}%`,
-            fontSize: 30,
-          }}
-        >
-          🥓
-        </span>
-      ))}
-
-      <h1>{tytl}</h1>
-
-      <button onClick={dodajKlik}>Kliknij!</button>
-      <p>Kliknięcia: {klikniecia}</p>
-      <p>Bonus: {bonusKlik}</p>
-
-      <h2>Sklep</h2>
-      <p>🥩 Mięso: {mieso}</p>
-
-      <button onClick={kupBonusKlik}>+1 klik ({koszt1})</button>
-      <button onClick={kupZubra}>Żubr (150)</button>
-      <button onClick={klik300co5s}>+300 / 5s ({koszt3})</button>
-      <button onClick={autoKliker}>Auto kliker ({koszt4})</button>
-
-      {/* Tylko ten przycisk ma dynamiczne position */}
-      <button
-        style={{ position: ulepszKlikertak }}
-        onClick={ulepszKliker}
-      >
-        Ulepsz kliker ({koszt7})
-      </button>
-
-      <button onClick={stoZubrow}>+100 żubrów / min</button>
-      <button onClick={usunZubry}>Zamień żubry na mięso</button>
-      <button onClick={zamienMieso}>Zamień mięso</button>
-      <button onClick={kupBoczek}>Kup boczek</button>
-      <button onClick={usunBoczek}>Usuń boczek</button>
-
-      <div
-        style={{
-          position: "relative",
-          margin: "20px auto",
-          width: 400,
-          height: 200,
-          background: "white",
-          overflow: "hidden",
-        }}
-      >
-        {zubry.map(z => (
-          <span
-            key={z.id}
-            style={{
-              position: "absolute",
-              left: `${z.x}%`,
-              top: `${z.y}%`,
-              fontSize: 30,
-            }}
-          >
-            🦬
-          </span>
-        ))}
-      </div>
-    </div>
+    <GameView
+      tytl={tytl}
+      klikniecia={klikniecia}
+      bonusKlik={bonusKlik}
+      mieso={mieso}
+      zubry={zubry}
+      boczek={boczek}
+      koszt1={koszt1}
+      koszt3={koszt3}
+      koszt4={koszt4}
+      koszt5={koszt5}
+      koszt7={koszt7}
+      kosztBoczek={kosztBoczek}
+      dodajKlik={dodajKlik}
+      kupBonusKlik={kupBonusKlik}
+      kupZubraKlik={kupZubraKlik}
+      klik300co5s={klik300co5s}
+      autoKliker={autoKliker}
+      ulepszKliker={ulepszKliker}
+      stoZubrow={stoZubrow}
+      usunZubry={usunZubry}
+      zamienMieso={zamienMieso}
+      kupBoczek={kupBoczek}
+      usunBoczek={usunBoczek}
+      cena={cena}
+      zuberki={zuberki}
+      kupZubraGielda={kupZubraGielda}
+      sprzedajZubraGielda={sprzedajZubraGielda}
+    />
   );
-}
+};
 
 export default App;
+ 
