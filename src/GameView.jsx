@@ -117,16 +117,17 @@ const GameView = ({
           </span>
         ))}
 
-        {boczek.map((b) => (
-          <span
-            key={b.id}
-            className="boczek"
-            style={{ left: `${b.x}%`, top: `${b.y}%` }}
-          >
-            🥓
-          </span>
-        ))}
+
       </div>
+      {boczek.map((b) => (
+        <span
+          key={b.id}
+          className="boczek"
+          style={{ left: `${b.x}%`, top: `${b.y}%` }}
+        >
+          🥓
+        </span>
+      ))}
     </div>
   );
 };

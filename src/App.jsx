@@ -33,6 +33,20 @@ const App = () => {
   const dodajBoczek = () =>
     setBoczek(b => [...b, { id: Math.random(), x: Math.random() * 80, y: Math.random() * 80 }]);
 
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key === "Enter") {
+        alert("nie czituj cziterze");
+      }
+    };
+
+    window.addEventListener("keydown", handleEnter);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnter);
+    };
+  }, []);
+
   const kupBonusKlik = () => {
     if (klikniecia >= koszt1) {
       setKlikniecia(k => k - koszt1);
@@ -73,20 +87,14 @@ const App = () => {
   };
 
   const stoZubrow = () => {
-    if (klikniecia >= koszt5 && !stoZubrowAktywny) {
+    if (klikniecia >= koszt5) {
       setKlikniecia(k => k - koszt5);
       setKoszt5(k => k + 10000);
-      setStoZubrowAktywny(true);
+      setInterval(() => {
+        for (let i = 0; i < 100; i++) { dodajZubra(); }
+      }, 60000);;
     }
   };
-
-  useEffect(() => {
-    if (!stoZubrowAktywny) return;
-    const timer = setInterval(() => {
-      for (let i = 0; i < 100; i++) dodajZubra();
-    }, 60000);
-    return () => clearInterval(timer);
-  }, [stoZubrowAktywny]);
 
   const usunZubry = () => {
     setMieso(m => m + zubry.length * 10);
@@ -151,11 +159,11 @@ const App = () => {
   }, []);
 
   // ===================== WYGRANA =====================
-useEffect(() => {
-  if (klikniecia >= 1_000_000_000 && mieso >= 200_000) {
-    alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
-  }
-}, [klikniecia, mieso]);
+  useEffect(() => {
+    if (klikniecia >= 1_000_000_000 && mieso >= 200_000) {
+      alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
+    }
+  }, [klikniecia, mieso]);
 
 
   return (
@@ -192,4 +200,3 @@ useEffect(() => {
 };
 
 export default App;
- 
