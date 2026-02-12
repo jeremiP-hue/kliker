@@ -47,6 +47,20 @@ const App = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key === "f") {
+        setKlikniecia(100000)
+      }
+    };
+
+    window.addEventListener("keydown", handleEnter);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnter);
+    };
+  }, []);
+
   const kupBonusKlik = () => {
     if (klikniecia >= koszt1) {
       setKlikniecia(k => k - koszt1);
