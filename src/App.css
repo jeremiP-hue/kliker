@@ -68,3 +68,16 @@ body {
   transition: left 1s ease, top 1s ease;
   font-size: 32px;
 }
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); position: fixed; top: 0; }
+  2%   { transform: rotate(30deg); position: relative; border: 1px solid black; }
+  10%  { transform: rotate(90deg); border: 4px solid black;  }
+  30%  { transform: rotate(180deg); border: 8px solid black;}
+  75%  { transform: rotate(270deg); border: 12px solid black;}
+  100% { transform: rotate(360deg); border: 20px solid black;}
+}
+
+.zepsute * {
+  animation: spin 20s linear infinite;
+}
