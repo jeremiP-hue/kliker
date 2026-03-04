@@ -1,6 +1,9 @@
+import { useState } from "react";
 import "./App.css";
 import Gielda from "./components/Gielda/Gielda";
 import Sklep from "./components/Sklep/Sklep";
+import Skrzynie from "./components/skrzynie";
+import Timer from "./components/timer";
 
 const GameView = ({
   // ----------- DANE (wartości do wyświetlenia) -----------
@@ -9,10 +12,11 @@ const GameView = ({
   bonusKlik,
   setBonusKlik,
   mieso,
+  setMieso,
   zubry,
   setZubry,
   boczek,
-setBoczek,
+  setBoczek,
   // ----------- DANE (koszty) -----------
   // ----------- AKCJE (funkcje z App.js) -----------
   dodajKlik,
@@ -21,12 +25,18 @@ setBoczek,
   zepsujwszystko,
 
 }) => {
+  const [skrzynieaktywne, setSkrzynieAktywne] = useState(false);
+  const [_klikery, setKlikery] = useState(0);
+
   return (
     <div className="app-wrapper">
-
+      <Skrzynie
+        skrzynieaktywne={skrzynieaktywne}
+        setKlikniecia={setKlikniecia}
+      />
       {/* 1) PANEL KLIKACZA = główny panel gry */}
       <div className="panel klikacz">
-        <h1>Kliknij 🦬 <span onClick={zepsujwszystko}>🦬</span></h1>
+        <h1>Kliknij🐃🐃 <span onClick={zepsujwszystko}>🐃</span></h1>
         {/* Kliknięcie = woła funkcję z App.js */}
         <button className="big-btn main" onClick={dodajKlik}>
           Kliknij żubra!
@@ -43,11 +53,19 @@ setBoczek,
         <Sklep
           klikniecia={klikniecia}
           setKlikniecia={setKlikniecia}
+          bonusKlik={bonusKlik}
           setBonusKlik={setBonusKlik}
-        setZubry={setZubry}
-        setBoczek={setBoczek}
+          zubry={zubry}
+          setZubry={setZubry}
+          boczek={boczek}
+          setBoczek={setBoczek}
+          mieso={mieso}
+          setMieso={setMieso}
+          setKlikery={setKlikery}
+          setSkrzynieAktywne={setSkrzynieAktywne}
         />
       </div>
+
 
 
       <Gielda
@@ -59,27 +77,34 @@ setBoczek,
 
 
       {/* 3) ARENA = miejsce gdzie latają emoji */}
-      <div className="arena">
-        {zubry.map((z) => (
-          <span
-            key={z.id}
-            className="zubr"
-            style={{ left: `${z.x}%`, top: `${z.y}%` }}
-          >
-            🦬
-          </span>
-        ))}
+      <div className="arena-column">
+        <div className="arena arena-main">
 
-        {boczek.map((b) => (
-          <span
-            key={b.id}
-            className="boczek"
-            style={{ left: `${b.x}%`, top: `${b.y}%` }}
-          >
-            🥓
-          </span>
-        ))}
+
+          {zubry.map((z) => (
+            <span
+              key={z.id}
+              className="zubr"
+              style={{ left: `${z.x}%`, top: `${z.y}%` }}
+            >
+              🐃
+            </span>
+          ))}
+        </div>
+        <div className="arena-timer">
+          <Timer />
+        </div>
       </div>
+
+      {boczek.map((b) => (
+        <span
+          key={b.id}
+          className="boczek"
+          style={{ left: `${b.x}%`, top: `${b.y}%` }}
+        >
+          [🥓]
+        </span>
+      ))}
     </div>
   );
 };

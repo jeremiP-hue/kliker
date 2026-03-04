@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import GameView from "./GameView";
 import "./App.css"
 
@@ -100,6 +100,7 @@ const App = () => {
         bonusKlik={bonusKlik}
         setBonusKlik={setBonusKlik}
         mieso={mieso}
+        setMieso={setMieso}
         zubry={zubry}
         boczek={boczek}
 

@@ -1,160 +1,215 @@
 import { useState } from "react";
-const Sklep = ({klikniecia , setKlikniecia, setBonusKlik, setZubry, setBoczek}) => {
-    // ---------- SKLEP: KOSZTY / ULEPSZENIA ----------
-    const [koszt1, setKoszt1] = useState(100);           // koszt kupna bonusKlik +1
-    const [koszt3, setKoszt3] = useState(500);           // koszt "300 co 5s"
-    const [koszt4, setKoszt4] = useState(10000);         // koszt autoklikera
-    const [koszt5, setKoszt5] = useState(50000);         // koszt "100 żubrów co minutę"
-    const [koszt7, setKoszt7] = useState(1000);          // koszt ulepszenia szybkości autoklikera
-    const [kosztBoczek, setKosztBoczek] = useState(300); // koszt boczku
-    const [poziomKlikera, setPoziomKlikera] = useState(1000); // co ile ms 
 
-    // BONUS: +1 do bonusKlik, rośnie koszt
-    const kupBonusKlik = () => {
-        if (klikniecia >= koszt1) {
-            setKlikniecia(k => k - koszt1);
-            setBonusKlik(b => b + 1);
-            setKoszt1(k => k + 100);
-        }
-    };
+const Sklep = ({
+  klikniecia,
+  setKlikniecia,
+  bonusKlik,
+  setBonusKlik,
+  zubry,
+  setZubry,
+  boczek,
+  setBoczek,
+  setSkrzynieAktywne,
+  mieso,
+  setMieso,
+  setKlikery,
+}) => {
+  const [koszta, setKoszta] = useState({
+    koszt1bonuskilk: 100,
+    koszt300klik: 500,
+    kosztautokliker: 10000,
+    kosztu100zubruwcomin: 50000,
+    kosztuleprzkliker: 1000,
+    kosztBoczek: 300,
+  });
 
-    // kup żubra za 150 kliknięć (po prostu dodaje żubra na ekran)
-    const kupZubraKlik = () => {
-        if (klikniecia >= 150) {
-            setKlikniecia(k => k - 150);
-            dodajZubra();
-        }
-    };
+  const [poziomKlikera, setPoziomKlikera] = useState(1000);
 
-    // co 5s +300 kliknięć (UWAGA: setInterval się nigdy nie czyści)
-    const klik300co5s = () => {
-        if (klikniecia >= koszt3) {
-            setKlikniecia(k => k - koszt3);
-            setKoszt3(k => k + 50);
-            setInterval(() => setKlikniecia(k => k + 300), 5000);
-        }
-    };
+  const addWithRandomPoz = (lista) => [
+    ...lista,
+    {
+      id: Math.random(),
+      x: Math.random() * 80,
+      y: Math.random() * 80,
+    },
+  ];
 
-    // autokliker: co "poziomKlikera" ms dodaje 1 + bonusKlik (UWAGA: setInterval też się nigdy nie czyści)
-    const autoKliker = () => {
-        if (klikniecia >= koszt4) {
-            setKlikniecia(k => k - koszt4);
-            setKoszt4(k => k + 300);
-            dojajkliker()
-            setKlikery(k => k + 1)
-        }
-    };
+  const dodajZubra = () => {
+    setZubry((z) => addWithRandomPoz(z));
+  };
 
-    const dojajkliker = () => {
-        const autoKiker = setInterval(() => setKlikniecia(k => k + 1 + bonusKlik), poziomKlikera);
+  const dodajBoczek = () => {
+    setBoczek((b) => addWithRandomPoz(b));
+  };
+
+  const kupBonusKlik = () => {
+    if (klikniecia >= koszta.koszt1bonuskilk) {
+      setKlikniecia((k) => k - koszta.koszt1bonuskilk);
+      setBonusKlik((b) => b + 1);
+      setKoszta((k) => ({
+        ...k,
+        koszt1bonuskilk: k.koszt1bonuskilk + 100,
+      }));
     }
+  };
 
-    // ulepszenie autoklikera: zmniejsza ms o 50 (czyli szybciej), do minimum 50
-    const ulepszKliker = () => {
-        if (klikniecia >= koszt7 && poziomKlikera > 50) {
-            setKlikniecia(k => k - koszt7);
-            setKoszt7(k => k + 1000);
-            setPoziomKlikera(p => p - 50);
-            for (let i = 0; i < klkery; i++) {
-                clearInterval(autoKiker)
-            }
+  const kupZubraKlik = () => {
+    if (klikniecia >= 150) {
+      setKlikniecia((k) => k - 150);
+      dodajZubra();
+    }
+  };
 
+  const klik300co5s = () => {
+    if (klikniecia >= koszta.koszt300klik) {
+      setKlikniecia((k) => k - koszta.koszt300klik);
+      setKoszta((k) => ({
+        ...k,
+        koszt300klik: k.koszt300klik + 50,
+      }));
+
+      setInterval(() => {
+        setKlikniecia((k) => k + 300);
+      }, 5000);
+    }
+  };
+
+  const doajKliker = () => {
+    setInterval(() => {
+      setKlikniecia((k) => k + 1 + bonusKlik);
+    }, poziomKlikera);
+  };
+
+  const autoKliker = () => {
+    if (klikniecia >= koszta.kosztautokliker) {
+      setKlikniecia((k) => k - koszta.kosztautokliker);
+      setKoszta((k) => ({
+        ...k,
+        kosztautokliker: k.kosztautokliker + 300,
+      }));
+      doajKliker();
+      setKlikery((k) => k + 1);
+    }
+  };
+
+  const ulepszKliker = () => {
+    if (klikniecia >= koszta.kosztuleprzkliker && poziomKlikera > 50) {
+      setKlikniecia((k) => k - koszta.kosztuleprzkliker);
+      setKoszta((k) => ({
+        ...k,
+        kosztuleprzkliker: k.kosztuleprzkliker + 1000,
+      }));
+      setPoziomKlikera((p) => p - 50);
+    }
+  };
+
+  const stoZubrow = () => {
+    if (klikniecia >= koszta.kosztu100zubruwcomin) {
+      setKlikniecia((k) => k - koszta.kosztu100zubruwcomin);
+      setKoszta((k) => ({
+        ...k,
+        kosztu100zubruwcomin: k.kosztu100zubruwcomin + 10000,
+      }));
+
+      setInterval(() => {
+        for (let i = 0; i < 100; i++) {
+          dodajZubra();
         }
-    };
+      }, 60000);
+    }
+  };
 
-    // co minutę dodaje 100 żubrów (UWAGA: też interval bez czyszczenia)
-    const stoZubrow = () => {
-        if (klikniecia >= koszt5) {
-            setKlikniecia(k => k - koszt5);
-            setKoszt5(k => k + 10000);
-            setInterval(() => {
-                for (let i = 0; i < 100; i++) dodajZubra();
-            }, 60000);
-        }
-    };
+  const usunZubry = () => {
+    setMieso((m) => m + zubry.length * 10);
+    setZubry([]);
+  };
 
-    // usuwa wszystkie żubry, daje mięso: 10 za sztukę
-    const usunZubry = () => {
-        setMieso(m => m + zubry.length * 10);
-        setZubry([]);
-    };
+  const zamienMieso = () => {
+    setKlikniecia((k) => k + mieso * 16);
+    setMieso(0);
+  };
 
-    // zamienia mięso na kliknięcia: 1 mięso = 16 kliknięć
-    const zamienMieso = () => {
-        setKlikniecia(k => k + mieso * 16);
-        setMieso(0);
-    };
+  const kupBoczek = () => {
+    if (mieso >= koszta.kosztBoczek) {
+      setMieso((m) => m - koszta.kosztBoczek);
+      setKoszta((k) => ({
+        ...k,
+        kosztBoczek: k.kosztBoczek + 20,
+      }));
+      setBonusKlik((b) => b + 2);
+      dodajBoczek();
+    }
+  };
 
-    // kup boczek za mięso: -kosztBoczek mięsa, +2 bonusKlik, koszt rośnie, dodaje obiekt boczku
-    const kupBoczek = () => {
-        if (mieso >= kosztBoczek) {
-            setMieso(m => m - kosztBoczek);
-            setKosztBoczek(k => k + 20);
-            setBonusKlik(b => b + 2);
-            dodajBoczek();
-        }
-    };
-
-    // usuwa boczki i dodatkowo daje bonusKlik = + liczba boczków
-    const usunBoczek = () => {
-        setBonusKlik(b => b + boczek.length);
-        setBoczek([]);
-    };
+  const usunBoczek = () => {
+    setBonusKlik((b) => b + boczek.length);
+    setBoczek([]);
+  };
+  const aktywujskrzynie = () => {
+    if (klikniecia >= 30000) {
+      setSkrzynieAktywne(true);
+      setKlikniecia((k) => k - 30000);
+    }
+  };
 
 
-    const addWithRandomPoz = z => [...z, { id: Math.random(), x: Math.random() * 80, y: Math.random() * 80 }]
+  return (
+    <>
+      <h2>Sklep</h2>
 
-    // dodaje żubra do listy z losową pozycją
-    const dodajZubra = () => setZubry(addWithRandomPoz);
+      <div className="shop-grid">
+        <button className="big-btn" onClick={kupBonusKlik}>
+          +1 do klikania
+          <br />({koszta.koszt1bonuskilk})
+        </button>
 
-    // dodaje boczek do listy z losową pozycją
-    const dodajBoczek = () => setBoczek(addWithRandomPoz);
+        <button className="big-btn" onClick={kupZubraKlik}>
+          Dodaj żubra
+          <br />(150)
+        </button>
 
-    return (
-        <>
-            <h2>Sklep</h2>
-            <div className="shop-grid">
-                <button className="big-btn" onClick={kupBonusKlik}>
-                    +1 do klikania<br />({koszt1})
-                </button>
+        <button className="big-btn" onClick={klik300co5s}>
+          +300 / 5s
+          <br />({koszta.koszt300klik})
+        </button>
 
-                <button className="big-btn" onClick={kupZubraKlik}>
-                    Dodaj żubra<br />(150)
-                </button>
+        <button className="big-btn" onClick={autoKliker}>
+          Auto-kliker
+          <br />({koszta.kosztautokliker})
+        </button>
 
-                <button className="big-btn" onClick={klik300co5s}>
-                    +300 / 5s<br />({koszt3})
-                </button>
+        <button className="big-btn" onClick={ulepszKliker}>
+          Ulepsz kliker
+          <br />({koszta.kosztuleprzkliker})
+        </button>
 
-                <button className="big-btn" onClick={autoKliker}>
-                    Auto-kliker<br />({koszt4})
-                </button>
+        <button className="big-btn" onClick={stoZubrow}>
+          +100 żubrów / min
+          <br />({koszta.kosztu100zubruwcomin})
+        </button>
 
-                <button className="big-btn" onClick={ulepszKliker}>
-                    Ulepsz kliker<br />({koszt7})
-                </button>
+        <button className="big-btn" onClick={usunZubry}>
+          Żubry → mięso
+        </button>
 
-                <button className="big-btn" onClick={stoZubrow}>
-                    +100 żubrów/min<br />({koszt5})
-                </button>
+        <button className="big-btn" onClick={zamienMieso}>
+          Mięso → kliknięcia
+        </button>
 
-                <button className="big-btn" onClick={usunZubry}>
-                    Żubry → mięso
-                </button>
+        <button className="big-btn" onClick={kupBoczek}>
+          Kup boczek
+          <br />({koszta.kosztBoczek})
+        </button>
 
-                <button className="big-btn" onClick={zamienMieso}>
-                    Mięso → kliknięcia
-                </button>
+        <button className="big-btn" onClick={usunBoczek}>
+          Usuń boczek
+        </button>
+        <button className="big-btn" onClick={aktywujskrzynie}>
+          kup skrzynie 30000
+        </button>
+      </div>
+    </>
+  );
+};
 
-                <button className="big-btn" onClick={kupBoczek}>
-                    Kup boczek<br />({kosztBoczek})
-                </button>
-
-                <button className="big-btn" onClick={usunBoczek}>
-                    Usuń boczek
-                </button>
-            </div>
-        </>
-    )
-}
-export default Sklep
+export default Sklep;
