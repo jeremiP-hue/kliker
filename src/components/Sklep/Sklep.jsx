@@ -145,6 +145,7 @@ const Sklep = ({
     setBonusKlik((b) => b + boczek.length);
     setBoczek([]);
   };
+
   const aktywujskrzynie = () => {
     if (klikniecia >= 30000) {
       setSkrzynieAktywne(true);
@@ -152,60 +153,60 @@ const Sklep = ({
     }
   };
 
-
   return (
     <>
       <h2>Sklep</h2>
 
-      <div className="shop-grid">
-        <button className="big-btn" onClick={kupBonusKlik}>
+      <div className="siatka-sklepu">
+        <button className="duzy-przycisk" onClick={kupBonusKlik}>
           +1 do klikania
           <br />({koszta.koszt1bonuskilk})
         </button>
 
-        <button className="big-btn" onClick={kupZubraKlik}>
+        <button className="duzy-przycisk" onClick={kupZubraKlik}>
           Dodaj żubra
           <br />(150)
         </button>
 
-        <button className="big-btn" onClick={klik300co5s}>
+        <button className="duzy-przycisk" onClick={klik300co5s}>
           +300 / 5s
           <br />({koszta.koszt300klik})
         </button>
 
-        <button className="big-btn" onClick={autoKliker}>
+        <button className="duzy-przycisk" onClick={autoKliker}>
           Auto-kliker
           <br />({koszta.kosztautokliker})
         </button>
 
-        <button className="big-btn" onClick={ulepszKliker}>
+        <button className="duzy-przycisk" onClick={ulepszKliker}>
           Ulepsz kliker
           <br />({koszta.kosztuleprzkliker})
         </button>
 
-        <button className="big-btn" onClick={stoZubrow}>
+        <button className="duzy-przycisk" onClick={stoZubrow}>
           +100 żubrów / min
           <br />({koszta.kosztu100zubruwcomin})
         </button>
 
-        <button className="big-btn" onClick={usunZubry}>
+        <button className="duzy-przycisk" onClick={usunZubry}>
           Żubry → mięso
         </button>
 
-        <button className="big-btn" onClick={zamienMieso}>
+        <button className="duzy-przycisk" onClick={zamienMieso}>
           Mięso → kliknięcia
         </button>
 
-        <button className="big-btn" onClick={kupBoczek}>
+        <button className="duzy-przycisk" onClick={kupBoczek}>
           Kup boczek
           <br />({koszta.kosztBoczek})
         </button>
 
-        <button className="big-btn" onClick={usunBoczek}>
+        <button className="duzy-przycisk" onClick={usunBoczek}>
           Usuń boczek
         </button>
-        <button className="big-btn" onClick={aktywujskrzynie}>
-          kup skrzynie 30000
+
+        <button className="duzy-przycisk" onClick={aktywujskrzynie}>
+          Kup skrzynię (30000)
         </button>
       </div>
     </>

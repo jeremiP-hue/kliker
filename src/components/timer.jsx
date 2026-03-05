@@ -21,7 +21,7 @@ const Timer = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return <div>{minuty},{sekundy}</div>;
+  return <div>minuty {minuty}, sekundy {sekundy}</div>;
 };
 
 export default Timer;

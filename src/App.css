@@ -1,11 +1,15 @@
+html, body, #root {
+  height: auto;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #2f4f4f;
+  background: #2acfcf;
   color: white;
 }
 
-.app-wrapper {
+.uklad-gry {
   display: grid;
   grid-template-columns: 420px 220px 1fr;
   gap: 15px;
@@ -13,52 +17,65 @@ body {
   align-items: start;
 }
 
-.panel-klikacz {
-  border-radius: 20%;
-}
 
-.panel {
+
+.panel-gry {
   background: #1e3a3a;
   padding: 10px;
   border: 2px solid black;
+  border-radius: 5px;
 }
 
-.panel h1 {
+.panel-gry h1 {
   font-size: 26px;
   margin: 5px 0;
 }
 
-.panel h2 {
+.panel-gry h2 {
   font-size: 18px;
   margin: 10px 0;
 }
 
-.panel p {
+.panel-gry p {
   font-size: 18px;
   margin: 5px 0;
 }
 
-.shop-grid {
+.siatka-sklepu {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 
-.big-btn {
+.duzy-przycisk {
   padding: 18px;
   font-size: 18px;
   background: #333;
   color: white;
   border: 2px solid black;
-  cursor: pointer;
+  cursor: progress;
 }
 
-.big-btn:hover {
+.duzy-przycisk:hover {
   background: #555;
 }
 
-/* Główna arena */
-.arena-column {
+.panel-statystyk {
+  margin: 12px 0;
+}
+
+.wiersz-statystyki {
+  margin: 4px 0;
+  font-size: 18px;
+}
+
+.przycisk-glowny {
+  width: auto;
+  padding: 12px 16px;
+  font-size: 16px;
+}
+
+.sekcja-areny {
   grid-column: 3;
   display: flex;
   flex-direction: column;
@@ -66,15 +83,17 @@ body {
   align-self: start;
 }
 
-.arena-main {
+.arena-glowna {
   position: relative;
   height: 450px;
-  background: lightgreen;
+  background-image: url("./assets/grass.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 3px solid black;
 }
 
-/* Timer pod areną */
-.arena-timer {
+.panel-timera {
   position: relative;
   height: 120px;
   background: #1e3a3a;
@@ -84,14 +103,14 @@ body {
   justify-content: center;
 }
 
-.zubr,
-.boczek {
+.ikona-zubra,
+.ikona-boczku {
   position: absolute;
   transition: left 1s ease, top 1s ease;
   font-size: 32px;
 }
 
-.skrzynia {
+.ikona-skrzyni {
   position: absolute;
   transition: left 1s ease, top 1s ease;
   font-size: 32px;
@@ -104,29 +123,41 @@ body {
     position: fixed;
     top: 0;
   }
+
   2% {
     transform: rotate(30deg);
     position: relative;
     border: 1px solid black;
   }
+
   10% {
     transform: rotate(90deg);
     border: 4px solid black;
   }
+
   30% {
     transform: rotate(180deg);
     border: 8px solid black;
   }
+
   75% {
     transform: rotate(270deg);
     border: 12px solid black;
   }
+
   100% {
     transform: rotate(360deg);
     border: 20px solid black;
   }
 }
 
-.zepsute * {
+.tryb-zepsucia * {
   animation: spin 20s linear infinite;
+}
+
+
+@media (max-width: 1200px) {
+  .uklad-gry {
+    display: block;
+  }
 }

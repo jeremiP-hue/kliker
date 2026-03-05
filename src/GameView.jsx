@@ -20,36 +20,43 @@ const GameView = ({
   // ----------- DANE (koszty) -----------
   // ----------- AKCJE (funkcje z App.js) -----------
   dodajKlik,
-
-
   zepsujwszystko,
-
 }) => {
   const [skrzynieaktywne, setSkrzynieAktywne] = useState(false);
   const [_klikery, setKlikery] = useState(0);
 
   return (
-    <div className="app-wrapper">
+    <div className="uklad-gry">
       <Skrzynie
         skrzynieaktywne={skrzynieaktywne}
         setKlikniecia={setKlikniecia}
       />
+
       {/* 1) PANEL KLIKACZA = główny panel gry */}
-      <div className="panel klikacz">
-        <h1>Kliknij🐃🐃 <span onClick={zepsujwszystko}>🐃</span></h1>
+      <div className="panel-gry panel-klikania">
+        <h1>
+          Kliknij 🦬🦬 <span onClick={zepsujwszystko}>🦬</span>
+        </h1>
+
         {/* Kliknięcie = woła funkcję z App.js */}
-        <button className="big-btn main" onClick={dodajKlik}>
+        <button className="duzy-przycisk przycisk-glowny" onClick={dodajKlik}>
           Kliknij żubra!
         </button>
 
         {/* Statystyki = tylko wyświetlanie */}
-        <div className="stats">
-          <div className="stat-line">Kliknięcia: <b>{klikniecia}</b></div>
-          <div className="stat-line">Bonus: <b>{bonusKlik}</b></div>
-          <div className="stat-line">Mięso: <b>{mieso}</b></div>
+        <div className="panel-statystyk">
+          <div className="wiersz-statystyki">
+            Kliknięcia: <b>{klikniecia}</b>
+          </div>
+          <div className="wiersz-statystyki">
+            Bonus: <b>{bonusKlik}</b>
+          </div>
+          <div className="wiersz-statystyki">
+            Mięso: <b>{mieso}</b>
+          </div>
         </div>
 
-        {/* Sklep = przyciski które wywołują akcje */}
+        {/* Sklep = przyciski, które wywołują akcje */}
         <Sklep
           klikniecia={klikniecia}
           setKlikniecia={setKlikniecia}
@@ -66,32 +73,23 @@ const GameView = ({
         />
       </div>
 
+      <Gielda klikniecia={klikniecia} setKlikniecia={setKlikniecia} />
 
-
-      <Gielda
-        klikniecia={klikniecia}
-        setKlikniecia={setKlikniecia}
-      />
-
-
-
-
-      {/* 3) ARENA = miejsce gdzie latają emoji */}
-      <div className="arena-column">
-        <div className="arena arena-main">
-
-
+      {/* 3) ARENA = miejsce, gdzie latają emoji */}
+      <div className="sekcja-areny">
+        <div className="arena-glowna">
           {zubry.map((z) => (
             <span
               key={z.id}
-              className="zubr"
+              className="ikona-zubra"
               style={{ left: `${z.x}%`, top: `${z.y}%` }}
             >
-              🐃
+              🦬
             </span>
           ))}
         </div>
-        <div className="arena-timer">
+
+        <div className="panel-timera">
           <Timer />
         </div>
       </div>
@@ -99,10 +97,10 @@ const GameView = ({
       {boczek.map((b) => (
         <span
           key={b.id}
-          className="boczek"
+          className="ikona-boczku"
           style={{ left: `${b.x}%`, top: `${b.y}%` }}
         >
-          [🥓]
+          🥓
         </span>
       ))}
     </div>

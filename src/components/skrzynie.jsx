@@ -35,8 +35,8 @@ const Skrzynie = ({ skrzynieaktywne, setKlikniecia }) => {
 
   return (
     <span
-      className="skrzynia"
-      style={{ left: `${pozX}%`, top: `${pozY}%`, zIndex: 10000000000000000}}
+      className="ikona-skrzyni"
+      style={{ left: `${pozX}%`, top: `${pozY}%`, zIndex: 10000000000000000 }}
       onClick={() => {
         setKlikniecia((k) => k + Math.floor(k / 5));
         setWidoczna(false);
