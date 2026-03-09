@@ -69,6 +69,7 @@ const GameView = ({
           mieso={mieso}
           setMieso={setMieso}
           setKlikery={setKlikery}
+          aktywna={skrzynieaktywne}
           setSkrzynieAktywne={setSkrzynieAktywne}
         />
       </div>
@@ -90,7 +91,7 @@ const GameView = ({
         </div>
 
         <div className="panel-timera">
-          <Timer />
+          <Timer bonusKlik={bonusKlik} setBonusKlik={setBonusKlik} />
         </div>
       </div>
 

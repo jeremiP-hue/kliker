@@ -148,5 +148,5 @@ body,
 .zubry-container span {
   position: absolute;
   font-size: 30px;
-  transition: left 0.8s ease-in, top 0.8s ease-in-out;
+  transition: left 0.8s linear, top 0.8s linear;
 }

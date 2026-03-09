@@ -9,6 +9,7 @@ const Sklep = ({
   setZubry,
   boczek,
   setBoczek,
+  aktywna,
   setSkrzynieAktywne,
   mieso,
   setMieso,
@@ -147,7 +148,7 @@ const Sklep = ({
   };
 
   const aktywujskrzynie = () => {
-    if (klikniecia >= 30000) {
+    if (klikniecia >= 30000 && !aktywna) {
       setSkrzynieAktywne(true);
       setKlikniecia((k) => k - 30000);
     }

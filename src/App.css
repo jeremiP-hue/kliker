@@ -1,11 +1,63 @@
-html, body, #root {
-  height: auto;
+@keyframes bgcolor {
+  0% {
+    background-color: #8b0000;
+  }
+
+  25% {
+    background-color: #00ff00;
+  }
+
+  30%{
+    background-color: #0f9751;
+  }
+
+  40%{
+    background-color: rgb(9, 116, 193);
+  }
+
+  50% {
+    background-color: #0000ff;
+  }
+
+  60%{
+    background-color: #1641a0e5;
+  }
+
+  75% {
+    background-color: #00ff00;
+  }
+
+  80%{
+    background-color: #333;
+  }
+
+  90%{
+    background-color: aqua;
+  }
+
+  100% {
+    background-color: #8b0000;
+  }
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html,
+#root {
+  background: transparent !important;
 }
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #2acfcf;
+  background-color: #8b0000;
+  animation: bgcolor 26.1s ease-in-out infinite;
+  will-change: background-color;
   color: white;
 }
 
@@ -106,8 +158,9 @@ body {
 .ikona-zubra,
 .ikona-boczku {
   position: absolute;
-  transition: left 1s ease, top 1s ease;
   font-size: 32px;
+  will-change: left, top;
+  transform: translateZ(0);
 }
 
 .ikona-skrzyni {
@@ -150,6 +203,8 @@ body {
     border: 20px solid black;
   }
 }
+
+
 
 .tryb-zepsucia * {
   animation: spin 20s linear infinite;

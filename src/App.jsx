@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import GameView from "./GameView";
 import "./App.css";
 
+const MIN = 0;
+const MAX = 88;
+const KROK_ZUBRA = Math.random();
+const KROK_BOCZKU = Math.random();
+
 const App = () => {
   // =========================================================
   // 1) STANY (useState) - czyli "pamięć gry"
@@ -49,19 +54,54 @@ const App = () => {
   }, []);
 
   // =========================================================
-  // 4) RUCH ŻUBRÓW I BOCZKÓW - losowanie nowych pozycji
+  // 4) RUCH ŻUBRÓW I BOCZKÓW - płynny ruch (stały krok + odbicia)
   // =========================================================
   useEffect(() => {
-    const timer = setInterval(() => {
-      setZubry((z) =>
-        z.map((zz) => ({ ...zz, x: Math.random() * 80, y: Math.random() * 80 }))
-      );
-      setBoczek((b) =>
-        b.map((bb) => ({ ...bb, x: Math.random() * 80, y: Math.random() * 80 }))
-      );
-    }, 20);
+    const ruszListe = (lista) =>
+      lista.map((o) => {
+        const krok = Math.random() 
+        let x = typeof o.x === "number" ? o.x : Math.random() * 80;
+        let y = typeof o.y === "number" ? o.y : Math.random() * 80;
+        let kierunekGora = o.kierunekGora;
+        let kierunekPrawo = o.kierunekPrawo;
 
-    return () => clearInterval(timer);
+        if (typeof kierunekGora !== "boolean") {
+          kierunekGora = Math.random() < 0.5;
+        }
+        if (typeof kierunekPrawo !== "boolean") {
+          kierunekPrawo = Math.random() < 0.5;
+        }
+
+        x += kierunekPrawo ? krok : -krok;
+        y += kierunekGora ? -krok : krok;
+
+        if (x <= MIN) {
+          x = MIN;
+          kierunekPrawo = true;
+        } else if (x >= MAX) {
+          x = MAX;
+          kierunekPrawo = false;
+        }
+
+        if (y <= MIN) {
+          y = MIN;
+          kierunekGora = false;
+        } else if (y >= MAX) {
+          y = MAX;
+          kierunekGora = true;
+        }
+
+        return { ...o, x, y, kierunekGora, kierunekPrawo };
+      });
+
+    const timer = setInterval(() => {
+      setZubry((z) => ruszListe(z));
+      setBoczek((b) => ruszListe(b));
+    }, 16);
+
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   // =========================================================
