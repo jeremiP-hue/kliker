@@ -59,7 +59,11 @@ const App = () => {
   useEffect(() => {
     const ruszListe = (lista) =>
       lista.map((o) => {
-        const krok = Math.random() 
+        const krok_lewo =
+          typeof o.krok_lewo === "number" ? o.krok_lewo : Math.random() * 2;
+        const krok_prawo =
+          typeof o.krok_prawo === "number" ? o.krok_prawo : Math.random() * 2;
+        const krok_gora = Math.random() * 2;
         let x = typeof o.x === "number" ? o.x : Math.random() * 80;
         let y = typeof o.y === "number" ? o.y : Math.random() * 80;
         let kierunekGora = o.kierunekGora;
@@ -72,8 +76,8 @@ const App = () => {
           kierunekPrawo = Math.random() < 0.5;
         }
 
-        x += kierunekPrawo ? krok : -krok;
-        y += kierunekGora ? -krok : krok;
+        x += kierunekPrawo ? krok_prawo : -krok_lewo;
+        y += kierunekGora ? -krok_gora : krok_gora;
 
         if (x <= MIN) {
           x = MIN;
@@ -91,7 +95,7 @@ const App = () => {
           kierunekGora = true;
         }
 
-        return { ...o, x, y, kierunekGora, kierunekPrawo };
+        return { ...o, x, y, kierunekGora, kierunekPrawo, krok_lewo, krok_prawo };
       });
 
     const timer = setInterval(() => {

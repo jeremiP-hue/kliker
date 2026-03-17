@@ -63,7 +63,7 @@ const Gielda = ({ klikniecia, setKlikniecia }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       const wynik = Math.random() > 0.5 ? -400 : 400;
-      const wynik2 = Math.random() > 0.5 ? -40 : 40;
+      const wynik2 = Math.random() > 0.5 ? -40 :-0;
       const wynik3 = Math.random() < 0.5 ? -4 : 4;
 
       setCena_coina((c) => {

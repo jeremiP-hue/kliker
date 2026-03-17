@@ -32,6 +32,8 @@ const Sklep = ({
       id: Math.random(),
       x: Math.random() * 80,
       y: Math.random() * 80,
+      krok_lewo: Math.random() * 2,
+      krok_prawo: Math.random() * 2,
     },
   ];
 

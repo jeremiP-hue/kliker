@@ -35,7 +35,7 @@ const GameView = ({
       {/* 1) PANEL KLIKACZA = główny panel gry */}
       <div className="panel-gry panel-klikania">
         <h1>
-          Kliknij 🦬🦬 <span onClick={zepsujwszystko}>🦬</span>
+          Kliknij 🐂🐂 <span onClick={zepsujwszystko}>🐂</span>
         </h1>
 
         {/* Kliknięcie = woła funkcję z App.js */}
@@ -85,7 +85,7 @@ const GameView = ({
               className="ikona-zubra"
               style={{ left: `${z.x}%`, top: `${z.y}%` }}
             >
-              🦬
+              🐂
             </span>
           ))}
         </div>
