@@ -7,11 +7,11 @@
     background-color: #00ff00;
   }
 
-  30%{
+  30% {
     background-color: #0f9751;
   }
 
-  40%{
+  40% {
     background-color: rgb(9, 116, 193);
   }
 
@@ -19,7 +19,7 @@
     background-color: #0000ff;
   }
 
-  60%{
+  60% {
     background-color: #1641a0e5;
   }
 
@@ -27,11 +27,11 @@
     background-color: #00ff00;
   }
 
-  80%{
+  80% {
     background-color: #333;
   }
 
-  90%{
+  90% {
     background-color: aqua;
   }
 
@@ -45,6 +45,7 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
+
 }
 
 html,
@@ -53,6 +54,7 @@ html,
 }
 
 body {
+  overflow: scroll;
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #8b0000;

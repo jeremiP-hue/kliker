@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const Timer = ({ bonusKlik, setBonusKlik }) => {
+
   const [uplynieteSekundy, setUplynieteSekundy] = useState(0);
   const [wylosowanaMinuta] = useState(() => Math.floor(Math.random() * 4));
   const [komunikat, setKomunikat] = useState("");
@@ -42,7 +43,7 @@ const Timer = ({ bonusKlik, setBonusKlik }) => {
     }
 
     if (bonusAktywny && minuty === wylosowanaMinuta + 3 && sekundy === 30) {
-      setBonusKlik(Math.max(0, bonusKlik - dodanyBonus));
+      setBonusKlik(Math.max(0, bonusKlik - dodanyBonus));   
       setBonusAktywny(false);
       setBonusZakonczony(true);
       setKomunikat("");
