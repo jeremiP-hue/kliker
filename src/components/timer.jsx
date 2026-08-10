@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 
-const Timer = ({ bonusKlik, setBonusKlik }) => {
+/* eslint-disable react-hooks/set-state-in-effect */
 
-  const [uplynieteSekundy, setUplynieteSekundy] = useState(0);
+const Timer = ({
+  bonusKlik,
+  setBonusKlik,
+  uplynieteSekundy,
+  setUplynieteSekundy,
+}) => {
+
+
   const [wylosowanaMinuta] = useState(() => Math.floor(Math.random() * 4));
   const [komunikat, setKomunikat] = useState("");
 
@@ -20,7 +27,7 @@ const Timer = ({ bonusKlik, setBonusKlik }) => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [setUplynieteSekundy]);
 
   useEffect(() => {
     if (!pokazanoInfo && minuty === wylosowanaMinuta && sekundy === 0) {

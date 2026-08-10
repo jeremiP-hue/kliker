@@ -4,9 +4,11 @@ import Gielda from "./components/Gielda/Gielda";
 import Sklep from "./components/Sklep/Sklep";
 import Skrzynie from "./components/skrzynie";
 import Timer from "./components/timer";
+import Wygana from "./wygna";
 
 const GameView = ({
   // ----------- DANE (wartości do wyświetlenia) -----------
+  wygrana,
   klikniecia,
   setKlikniecia,
   bonusKlik,
@@ -24,9 +26,12 @@ const GameView = ({
 }) => {
   const [skrzynieaktywne, setSkrzynieAktywne] = useState(false);
   const [_klikery, setKlikery] = useState(0);
+  const [uplynieteSekundy, setUplynieteSekundy] = useState(0);
+
 
   return (
     <div className="uklad-gry">
+      {wygrana && <Wygana uplynieteSekundy={uplynieteSekundy} />}
       <Skrzynie
         skrzynieaktywne={skrzynieaktywne}
         setKlikniecia={setKlikniecia}
@@ -91,7 +96,12 @@ const GameView = ({
         </div>
 
         <div className="panel-timera">
-          <Timer bonusKlik={bonusKlik} setBonusKlik={setBonusKlik} />
+          <Timer
+            bonusKlik={bonusKlik}
+            setBonusKlik={setBonusKlik}
+            uplynieteSekundy={uplynieteSekundy}
+            setUplynieteSekundy={setUplynieteSekundy}
+          />
         </div>
       </div>
 

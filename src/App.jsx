@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GameView from "./GameView";
 import "./App.css";
 
@@ -20,8 +20,10 @@ const App = () => {
   // ---------- OBIEKTY NA EKRANIE ----------
   const [zubry, setZubry] = useState([]); // lista żubrów (id, x, y)
   const [boczek, setBoczek] = useState([]); // lista boczków (id, x, y)
+  const pokazanoWygrana = useRef(false);
 
   const [isZepsute, setZepsute] = useState(false);
+  const wygrana = klikniecia >= 1_000_000_000 && mieso >= 200_000;
 
   // =========================================================
   // 2) FUNKCJE POMOCNICZE - dodawanie rzeczy / kliknięcie
@@ -112,10 +114,11 @@ const App = () => {
   // 5) WYGRANA - warunek końca gry
   // =========================================================
   useEffect(() => {
-    if (klikniecia >= 1_000_000_000 && mieso >= 200_000) {
+    if (wygrana && !pokazanoWygrana.current) {
       alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
+      pokazanoWygrana.current = true;
     }
-  }, [klikniecia, mieso]);
+  }, [wygrana]);
 
   // =========================================================
   // 6) RENDER - przekazanie danych do GameView
@@ -123,6 +126,7 @@ const App = () => {
   return (
     <div className={isZepsute ? "tryb-zepsucia" : ""}>
       <GameView
+        wygrana={wygrana}
         klikniecia={klikniecia}
         setKlikniecia={setKlikniecia}
         bonusKlik={bonusKlik}
