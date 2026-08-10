@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const Sklep = ({
+  wygrana,
   klikniecia,
   setKlikniecia,
   bonusKlik,
@@ -38,6 +39,10 @@ const Sklep = ({
   ];
 
   const dodajZubra = () => {
+    if (wygrana) {
+      return;
+    }
+
     setZubry((z) => addWithRandomPoz(z));
   };
 
@@ -57,7 +62,7 @@ const Sklep = ({
   };
 
   const kupZubraKlik = () => {
-    if (klikniecia >= 150) {
+    if (!wygrana && klikniecia >= 150) {
       setKlikniecia((k) => k - 150);
       dodajZubra();
     }
@@ -107,7 +112,7 @@ const Sklep = ({
   };
 
   const stoZubrow = () => {
-    if (klikniecia >= koszta.kosztu100zubruwcomin) {
+    if (!wygrana && klikniecia >= koszta.kosztu100zubruwcomin) {
       setKlikniecia((k) => k - koszta.kosztu100zubruwcomin);
       setKoszta((k) => ({
         ...k,
@@ -166,7 +171,7 @@ const Sklep = ({
           <br />({koszta.koszt1bonuskilk})
         </button>
 
-        <button className="duzy-przycisk" onClick={kupZubraKlik}>
+        <button className="duzy-przycisk" onClick={kupZubraKlik} disabled={wygrana}>
           Dodaj żubra
           <br />(150)
         </button>
@@ -186,7 +191,7 @@ const Sklep = ({
           <br />({koszta.kosztuleprzkliker})
         </button>
 
-        <button className="duzy-przycisk" onClick={stoZubrow}>
+        <button className="duzy-przycisk" onClick={stoZubrow} disabled={wygrana}>
           +100 żubrów / min
           <br />({koszta.kosztu100zubruwcomin})
         </button>

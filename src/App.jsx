@@ -21,14 +21,28 @@ const App = () => {
   const [zubry, setZubry] = useState([]); // lista żubrów (id, x, y)
   const [boczek, setBoczek] = useState([]); // lista boczków (id, x, y)
   const pokazanoWygrana = useRef(false);
+  const wygranaRef = useRef(false);
 
   const [isZepsute, setZepsute] = useState(false);
   const wygrana = klikniecia >= 1_000_000_000 && mieso >= 200_000;
+  const ustawZubry = (updater) => {
+    setZubry((aktualne) => {
+      if (wygranaRef.current) {
+        return [];
+      }
+
+      return typeof updater === "function" ? updater(aktualne) : updater;
+    });
+  };
 
   // =========================================================
   // 2) FUNKCJE POMOCNICZE - dodawanie rzeczy / kliknięcie
   // =========================================================
   const dodajKlik = () => setKlikniecia((k) => k + 1 + bonusKlik);
+
+  useEffect(() => {
+    wygranaRef.current = wygrana;
+  }, [wygrana]);
 
   // =========================================================
   // 3) ANTY-CHEAT / KLAWISZE (useEffect + eventListener)
@@ -101,7 +115,7 @@ const App = () => {
       });
 
     const timer = setInterval(() => {
-      setZubry((z) => ruszListe(z));
+      setZubry((z) => (wygranaRef.current ? [] : ruszListe(z)));
       setBoczek((b) => ruszListe(b));
     }, 16);
 
@@ -116,7 +130,9 @@ const App = () => {
   useEffect(() => {
     if (wygrana && !pokazanoWygrana.current) {
       alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
+
       pokazanoWygrana.current = true;
+
     }
   }, [wygrana]);
 
@@ -133,11 +149,11 @@ const App = () => {
         setBonusKlik={setBonusKlik}
         mieso={mieso}
         setMieso={setMieso}
-        zubry={zubry}
+        zubry={wygrana ? [] : zubry}
         boczek={boczek}
         dodajKlik={dodajKlik}
         zepsujwszystko={() => setZepsute(true)}
-        setZubry={setZubry}
+        setZubry={ustawZubry}
         setBoczek={setBoczek}
       />
     </div>

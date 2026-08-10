@@ -63,6 +63,7 @@ const GameView = ({
 
         {/* Sklep = przyciski, które wywołują akcje */}
         <Sklep
+          wygrana={wygrana}
           klikniecia={klikniecia}
           setKlikniecia={setKlikniecia}
           bonusKlik={bonusKlik}
