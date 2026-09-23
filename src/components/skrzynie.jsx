@@ -1,9 +1,28 @@
 import { useEffect, useState } from "react";
+import { pobierzLocalStorage, ustawLocalStorage } from "../useLocalStorageState";
 
 const Skrzynie = ({ skrzynieaktywne, setKlikniecia }) => {
-  const [pozX, setPozX] = useState(0);
-  const [pozY, setPozY] = useState(0);
-  const [widoczna, setWidoczna] = useState(false);
+  const [pozX, setPozX] = useState(() =>
+    pobierzLocalStorage("skrzyniaPozX", 0)
+  );
+  const [pozY, setPozY] = useState(() =>
+    pobierzLocalStorage("skrzyniaPozY", 0)
+  );
+  const [widoczna, setWidoczna] = useState(() =>
+    pobierzLocalStorage("skrzyniaWidoczna", false)
+  );
+
+  useEffect(() => {
+    ustawLocalStorage("skrzyniaPozX", pozX);
+  }, [pozX]);
+
+  useEffect(() => {
+    ustawLocalStorage("skrzyniaPozY", pozY);
+  }, [pozY]);
+
+  useEffect(() => {
+    ustawLocalStorage("skrzyniaWidoczna", widoczna);
+  }, [widoczna]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -15,7 +34,7 @@ const Skrzynie = ({ skrzynieaktywne, setKlikniecia }) => {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [skrzynieaktywne, widoczna]);
+  }, [setPozX, setPozY, setWidoczna, skrzynieaktywne, widoczna]);
 
   useEffect(() => {
     if (!widoczna) {
@@ -27,7 +46,7 @@ const Skrzynie = ({ skrzynieaktywne, setKlikniecia }) => {
     }, 5000);
 
     return () => clearTimeout(timeoutId);
-  }, [widoczna]);
+  }, [setWidoczna, widoczna]);
 
   if (!skrzynieaktywne || !widoczna) {
     return null;

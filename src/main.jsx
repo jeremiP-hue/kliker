@@ -1,10 +1,33 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
+import "./index.css";
+import App from "./App.jsx";
+import TablicaWynikow from "./components/TablicaWynikow/TablicaWynikow";
+import UkladStrony from "./components/UkladStrony";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const routerAplikacji = createBrowserRouter([
+  {
+    path: "/",
+    element: <UkladStrony />,
+    children: [
+      {
+        index: true,
+        element: <App />,
+      },
+      {
+        path: "tablica-wynikow",
+        element: <TablicaWynikow />,
+      },
+    ],
+  },
+]);
+
+const korzenAplikacji = document.getElementById("root");
+
+ReactDOM.createRoot(korzenAplikacji).render(
+  <React.StrictMode>
+    <RouterProvider router={routerAplikacji} />
+  </React.StrictMode>,
+);

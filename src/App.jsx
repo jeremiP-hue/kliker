@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import GameView from "./GameView";
+import { pobierzLocalStorage, ustawLocalStorage } from "./useLocalStorageState";
 import "./App.css";
 
 const MIN = 0;
@@ -8,24 +9,26 @@ const KROK_ZUBRA = Math.random();
 const KROK_BOCZKU = Math.random();
 
 const App = () => {
-  // =========================================================
-  // 1) STANY (useState) - czyli "pamięć gry"
-  // =========================================================
+  const [klikniecia, setKlikniecia] = useState(() =>
+    pobierzLocalStorage("klikniecia", 0)
+  );
+  const [bonusKlik, setBonusKlik] = useState(() =>
+    pobierzLocalStorage("bonusKlik", 0)
+  );
+  const [mieso, setMieso] = useState(() => pobierzLocalStorage("mieso", 0));
+  const [zubry, setZubry] = useState(() => pobierzLocalStorage("zubry", []));
+  const [boczek, setBoczek] = useState(() =>
+    pobierzLocalStorage("boczek", [])
+  );
+  const [isZepsute, setZepsute] = useState(() =>
+    pobierzLocalStorage("isZepsute", false)
+  );
 
-  // ---------- KLIKACZ / WALUTY ----------
-  const [klikniecia, setKlikniecia] = useState(0); // główna waluta gry
-  const [bonusKlik, setBonusKlik] = useState(0); // dodatkowe kliknięcia do każdego kliku
-  const [mieso, setMieso] = useState(0); // mięso z usuwania żubrów
-
-  // ---------- OBIEKTY NA EKRANIE ----------
-  const [zubry, setZubry] = useState([]); // lista żubrów (id, x, y)
-  const [boczek, setBoczek] = useState([]); // lista boczków (id, x, y)
   const pokazanoWygrana = useRef(false);
   const wygranaRef = useRef(false);
 
-  const [isZepsute, setZepsute] = useState(false);
   const wygrana = klikniecia >= 1_000_000_000 && mieso >= 200_000;
-  const ustawZubry = (updater) => {
+  const ustawZubry = useCallback((updater) => {
     setZubry((aktualne) => {
       if (wygranaRef.current) {
         return [];
@@ -33,20 +36,38 @@ const App = () => {
 
       return typeof updater === "function" ? updater(aktualne) : updater;
     });
-  };
+  }, []);
 
-  // =========================================================
-  // 2) FUNKCJE POMOCNICZE - dodawanie rzeczy / kliknięcie
-  // =========================================================
   const dodajKlik = () => setKlikniecia((k) => k + 1 + bonusKlik);
+
+  useEffect(() => {
+    ustawLocalStorage("klikniecia", klikniecia);
+  }, [klikniecia]);
+
+  useEffect(() => {
+    ustawLocalStorage("bonusKlik", bonusKlik);
+  }, [bonusKlik]);
+
+  useEffect(() => {
+    ustawLocalStorage("mieso", mieso);
+  }, [mieso]);
+
+  useEffect(() => {
+    ustawLocalStorage("zubry", zubry);
+  }, [zubry]);
+
+  useEffect(() => {
+    ustawLocalStorage("boczek", boczek);
+  }, [boczek]);
+
+  useEffect(() => {
+    ustawLocalStorage("isZepsute", isZepsute);
+  }, [isZepsute]);
 
   useEffect(() => {
     wygranaRef.current = wygrana;
   }, [wygrana]);
 
-  // =========================================================
-  // 3) ANTY-CHEAT / KLAWISZE (useEffect + eventListener)
-  // =========================================================
   useEffect(() => {
     const handleEnter = (e) => {
       if (e.key === "Enter") {
@@ -67,11 +88,8 @@ const App = () => {
 
     window.addEventListener("keydown", handleF);
     return () => window.removeEventListener("keydown", handleF);
-  }, []);
+  }, [setKlikniecia]);
 
-  // =========================================================
-  // 4) RUCH ŻUBRÓW I BOCZKÓW - płynny ruch (stały krok + odbicia)
-  // =========================================================
   useEffect(() => {
     const ruszListe = (lista) =>
       lista.map((o) => {
@@ -122,23 +140,16 @@ const App = () => {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [setBoczek, setZubry]);
 
-  // =========================================================
-  // 5) WYGRANA - warunek końca gry
-  // =========================================================
   useEffect(() => {
     if (wygrana && !pokazanoWygrana.current) {
-      alert("🏆 WYGRAŁEŚ GRĘ! Jesteś królem żubrów! 🦬👑");
+      alert("WYGRALES GRE! Jestes krolem zubrow!");
 
       pokazanoWygrana.current = true;
-
     }
   }, [wygrana]);
 
-  // =========================================================
-  // 6) RENDER - przekazanie danych do GameView
-  // =========================================================
   return (
     <div className={isZepsute ? "tryb-zepsucia" : ""}>
       <GameView

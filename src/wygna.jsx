@@ -4,7 +4,7 @@ import Popup from "./popup";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
-const Wygana = ({ uplynieteSekundy }) => {
+const Wygana = ({ uplynieteSekundy, onSaved }) => {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("");
 
@@ -14,12 +14,13 @@ const Wygana = ({ uplynieteSekundy }) => {
     try {
       const dane = {
         name,
-        czas_wygranej: uplynieteSekundy,
+        czas_wygranej: Number(uplynieteSekundy),
       };
 
       const response = await axios.post(`${API_BASE_URL}/wynik`, dane);
       console.log(response.data);
       setStatus("Wynik zapisany.");
+      onSaved();
     } catch (error) {
       console.error(error);
       setStatus("Nie udalo sie zapisac wyniku.");

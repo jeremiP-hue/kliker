@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Gielda from "./components/Gielda/Gielda";
 import Sklep from "./components/Sklep/Sklep";
 import Skrzynie from "./components/skrzynie";
 import Timer from "./components/timer";
 import Wygana from "./wygna";
+import { pobierzLocalStorage, ustawLocalStorage } from "./useLocalStorageState";
 
 const GameView = ({
   // ----------- DANE (wartości do wyświetlenia) -----------
@@ -24,14 +25,44 @@ const GameView = ({
   dodajKlik,
   zepsujwszystko,
 }) => {
-  const [skrzynieaktywne, setSkrzynieAktywne] = useState(false);
-  const [_klikery, setKlikery] = useState(0);
-  const [uplynieteSekundy, setUplynieteSekundy] = useState(0);
+  const [skrzynieaktywne, setSkrzynieAktywne] = useState(() =>
+    pobierzLocalStorage("skrzynieaktywne", false)
+  );
+  const [_klikery, setKlikery] = useState(() =>
+    pobierzLocalStorage("klikery", 0)
+  );
+  const [uplynieteSekundy, setUplynieteSekundy] = useState(() =>
+    pobierzLocalStorage("uplynieteSekundy", 0)
+  );
+  const [wynikZapisany, setWynikZapisany] = useState(() =>
+    pobierzLocalStorage("wynikZapisany", false)
+  );
+
+  useEffect(() => {
+    ustawLocalStorage("skrzynieaktywne", skrzynieaktywne);
+  }, [skrzynieaktywne]);
+
+  useEffect(() => {
+    ustawLocalStorage("klikery", _klikery);
+  }, [_klikery]);
+
+  useEffect(() => {
+    ustawLocalStorage("uplynieteSekundy", uplynieteSekundy);
+  }, [uplynieteSekundy]);
+
+  useEffect(() => {
+    ustawLocalStorage("wynikZapisany", wynikZapisany);
+  }, [wynikZapisany]);
 
 
   return (
     <div className="uklad-gry">
-      {wygrana && <Wygana uplynieteSekundy={uplynieteSekundy} />}
+      {wygrana && !wynikZapisany && (
+        <Wygana
+          uplynieteSekundy={uplynieteSekundy}
+          onSaved={() => setWynikZapisany(true)}
+        />
+      )}
       <Skrzynie
         skrzynieaktywne={skrzynieaktywne}
         setKlikniecia={setKlikniecia}
@@ -55,6 +86,9 @@ const GameView = ({
           </div>
           <div className="wiersz-statystyki">
             Bonus: <b>{bonusKlik}</b>
+          </div>
+          <div className="wiersz-statystyki">
+            Zubry: <b>{zubry.length}</b>
           </div>
           <div className="wiersz-statystyki">
             Mięso: <b>{mieso}</b>
@@ -98,6 +132,7 @@ const GameView = ({
 
         <div className="panel-timera">
           <Timer
+            wygrana={wygrana}
             bonusKlik={bonusKlik}
             setBonusKlik={setBonusKlik}
             uplynieteSekundy={uplynieteSekundy}

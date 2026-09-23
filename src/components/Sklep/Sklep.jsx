@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  pobierzLocalStorage,
+  ustawLocalStorage,
+} from "../../useLocalStorageState";
 
 const Sklep = ({
   wygrana,
@@ -16,18 +20,30 @@ const Sklep = ({
   setMieso,
   setKlikery,
 }) => {
-  const [koszta, setKoszta] = useState({
-    koszt1bonuskilk: 100,
-    koszt300klik: 500,
-    kosztautokliker: 10000,
-    kosztu100zubruwcomin: 50000,
-    kosztuleprzkliker: 1000,
-    kosztBoczek: 300,
-  });
+  const [koszta, setKoszta] = useState(() =>
+    pobierzLocalStorage("koszta", {
+      koszt1bonuskilk: 100,
+      koszt300klik: 500,
+      kosztautokliker: 10000,
+      kosztu100zubruwcomin: 50000,
+      kosztuleprzkliker: 1000,
+      kosztBoczek: 300,
+    })
+  );
+  const [poziomKlikera, setPoziomKlikera] = useState(() =>
+    pobierzLocalStorage("poziomKlikera", 1000)
+  );
+  const [klik300Liczniki, setKlik300Liczniki] = useState(() =>
+    pobierzLocalStorage("klik300Liczniki", 0)
+  );
+  const [autoKlikery, setAutoKlikery] = useState(() =>
+    pobierzLocalStorage("autoKlikery", 0)
+  );
+  const [stoZubrowLiczniki, setStoZubrowLiczniki] = useState(() =>
+    pobierzLocalStorage("stoZubrowLiczniki", 0)
+  );
 
-  const [poziomKlikera, setPoziomKlikera] = useState(1000);
-
-  const addWithRandomPoz = (lista) => [
+  const addWithRandomPoz = useCallback((lista) => [
     ...lista,
     {
       id: Math.random(),
@@ -36,7 +52,7 @@ const Sklep = ({
       krok_lewo: Math.random() * 2,
       krok_prawo: Math.random() * 2,
     },
-  ];
+  ], []);
 
   const dodajZubra = () => {
     if (wygrana) {
@@ -46,9 +62,41 @@ const Sklep = ({
     setZubry((z) => addWithRandomPoz(z));
   };
 
+  const dodajWieleZubrow = useCallback((liczba) => {
+    setZubry((aktualne) => {
+      let nowe = aktualne;
+
+      for (let i = 0; i < liczba; i++) {
+        nowe = addWithRandomPoz(nowe);
+      }
+
+      return nowe;
+    });
+  }, [addWithRandomPoz, setZubry]);
+
   const dodajBoczek = () => {
     setBoczek((b) => addWithRandomPoz(b));
   };
+
+  useEffect(() => {
+    ustawLocalStorage("koszta", koszta);
+  }, [koszta]);
+
+  useEffect(() => {
+    ustawLocalStorage("poziomKlikera", poziomKlikera);
+  }, [poziomKlikera]);
+
+  useEffect(() => {
+    ustawLocalStorage("klik300Liczniki", klik300Liczniki);
+  }, [klik300Liczniki]);
+
+  useEffect(() => {
+    ustawLocalStorage("autoKlikery", autoKlikery);
+  }, [autoKlikery]);
+
+  useEffect(() => {
+    ustawLocalStorage("stoZubrowLiczniki", stoZubrowLiczniki);
+  }, [stoZubrowLiczniki]);
 
   const kupBonusKlik = () => {
     if (klikniecia >= koszta.koszt1bonuskilk) {
@@ -75,17 +123,8 @@ const Sklep = ({
         ...k,
         koszt300klik: k.koszt300klik + 50,
       }));
-
-      setInterval(() => {
-        setKlikniecia((k) => k + 300);
-      }, 5000);
+      setKlik300Liczniki((liczba) => liczba + 1);
     }
-  };
-
-  const doajKliker = () => {
-    setInterval(() => {
-      setKlikniecia((k) => k + 1 + bonusKlik);
-    }, poziomKlikera);
   };
 
   const autoKliker = () => {
@@ -95,7 +134,7 @@ const Sklep = ({
         ...k,
         kosztautokliker: k.kosztautokliker + 300,
       }));
-      doajKliker();
+      setAutoKlikery((liczba) => liczba + 1);
       setKlikery((k) => k + 1);
     }
   };
@@ -112,20 +151,52 @@ const Sklep = ({
   };
 
   const stoZubrow = () => {
-    if (!wygrana && klikniecia >= koszta.kosztu100zubruwcomin) {
+    if ( klikniecia >= koszta.kosztu100zubruwcomin) {
       setKlikniecia((k) => k - koszta.kosztu100zubruwcomin);
       setKoszta((k) => ({
         ...k,
         kosztu100zubruwcomin: k.kosztu100zubruwcomin + 10000,
       }));
-
-      setInterval(() => {
-        for (let i = 0; i < 100; i++) {
-          dodajZubra();
-        }
-      }, 60000);
+      setStoZubrowLiczniki((liczba) => liczba + 1);
+      dodajWieleZubrow(100);
     }
   };
+
+  useEffect(() => {
+    if (klik300Liczniki <= 0) {
+      return undefined;
+    }
+
+    const intervalId = setInterval(() => {
+      setKlikniecia((k) => k + 300 * klik300Liczniki);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [klik300Liczniki, setKlikniecia]);
+
+  useEffect(() => {
+    if (autoKlikery <= 0) {
+      return undefined;
+    }
+
+    const intervalId = setInterval(() => {
+      setKlikniecia((k) => k + (1 + bonusKlik) * autoKlikery);
+    }, poziomKlikera);
+
+    return () => clearInterval(intervalId);
+  }, [autoKlikery, bonusKlik, poziomKlikera, setKlikniecia]);
+
+  useEffect(() => {
+    if (stoZubrowLiczniki <= 0 || wygrana) {
+      return undefined;
+    }
+
+    const intervalId = setInterval(() => {
+      dodajWieleZubrow(100 * stoZubrowLiczniki);
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [dodajWieleZubrow, stoZubrowLiczniki, wygrana]);
 
   const usunZubry = () => {
     setMieso((m) => m + zubry.length * 10);
@@ -193,7 +264,7 @@ const Sklep = ({
 
         <button className="duzy-przycisk" onClick={stoZubrow} disabled={wygrana}>
           +100 żubrów / min
-          <br />({koszta.kosztu100zubruwcomin})
+          <br />({koszta.kosztu100zubruwcomin}) x{stoZubrowLiczniki}
         </button>
 
         <button className="duzy-przycisk" onClick={usunZubry}>

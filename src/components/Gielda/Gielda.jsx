@@ -1,22 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  pobierzLocalStorage,
+  ustawLocalStorage,
+} from "../../useLocalStorageState";
 
 const Gielda = ({ klikniecia, setKlikniecia }) => {
-  // =========================================================
-  // 5) GIEŁDA - kupno/sprzedaż żubrów po zmiennej cenie
-  // =========================================================
-  const [cena, setCena] = useState(10); // cena żubra na giełdzie (zmienia się co 200ms)
-  const [zuberki, setZuberki] = useState(0);
+  const [cena, setCena] = useState(() =>
+    pobierzLocalStorage("gieldaCenaZubra", 10)
+  );
+  const [zuberki, setZuberki] = useState(() =>
+    pobierzLocalStorage("gieldaZuberki", 0)
+  );
+  const [cena_coina, setCena_coina] = useState(() =>
+    pobierzLocalStorage("gieldaCenaCoina", 10000)
+  );
+  const [iloscCoinow, setIloscCoinow] = useState(() =>
+    pobierzLocalStorage("gieldaIloscCoinow", 0)
+  );
 
-  // ---------- COIN ----------
-  const [cena_coina, setCena_coina] = useState(10000); // cena coina (zmienia się co 300ms)
-  const [iloscCoinow, setIloscCoinow] = useState(0);
+  useEffect(() => {
+    ustawLocalStorage("gieldaCenaZubra", cena);
+  }, [cena]);
+
+  useEffect(() => {
+    ustawLocalStorage("gieldaZuberki", zuberki);
+  }, [zuberki]);
+
+  useEffect(() => {
+    ustawLocalStorage("gieldaCenaCoina", cena_coina);
+  }, [cena_coina]);
+
+  useEffect(() => {
+    ustawLocalStorage("gieldaIloscCoinow", iloscCoinow);
+  }, [iloscCoinow]);
 
   const kupZubraGielda = () => {
     if (klikniecia >= cena) {
       setKlikniecia((k) => k - cena);
       setZuberki((z) => z + 1);
     } else {
-      alert("Jesteś biedny, nie masz hajsu.");
+      alert("Jestes biedny, nie masz hajsu.");
     }
   };
 
@@ -25,28 +48,24 @@ const Gielda = ({ klikniecia, setKlikniecia }) => {
       setZuberki((z) => z - 1);
       setKlikniecia((k) => k + cena);
     } else {
-      alert("Nie masz żubrów do sprzedaży.");
+      alert("Nie masz zubrow do sprzedazy.");
     }
   };
 
-  // cena żubra zmienia się co 200ms o ±1, minimum 1
   useEffect(() => {
     const timer = setInterval(() => {
       setCena((c) => Math.max(1, c + (Math.random() < 0.5 ? -1 : 1)));
     }, 200);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [setCena]);
 
-  // =========================================================
-  // 6) COINY - kupno/sprzedaż
-  // =========================================================
   const kupCoina = () => {
     if (klikniecia >= cena_coina) {
       setKlikniecia((k) => k - cena_coina);
       setIloscCoinow((z) => z + 1);
     } else {
-      alert("Nie masz mamony 🪙🪙🪙");
+      alert("Nie masz mamony");
     }
   };
 
@@ -55,15 +74,14 @@ const Gielda = ({ klikniecia, setKlikniecia }) => {
       setIloscCoinow((c) => c - 1);
       setKlikniecia((k) => k + cena_coina);
     } else {
-      alert("Nie masz coinów 🪙");
+      alert("Nie masz coinow");
     }
   };
 
-  // cena coina zmienia się co 300ms o mieszankę ±400 ±40 ±4
   useEffect(() => {
     const timer = setInterval(() => {
       const wynik = Math.random() > 0.5 ? -400 : 400;
-      const wynik2 = Math.random() > 0.5 ? -40 :-0;
+      const wynik2 = Math.random() > 0.5 ? -40 : -0;
       const wynik3 = Math.random() < 0.5 ? -4 : 4;
 
       setCena_coina((c) => {
@@ -73,29 +91,29 @@ const Gielda = ({ klikniecia, setKlikniecia }) => {
     }, 300);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [setCena_coina]);
 
   return (
     <div className="panel-gry">
-      <h2>Giełda żuberkowa</h2>
+      <h2>Gielda zuberkowa</h2>
       <p>
-        Cena żubra: <b>{cena}</b>
+        Cena zubra: <b>{cena}</b>
       </p>
       <p>
-        Ilość żubrów: <b>{zuberki}</b>
+        Ilosc zubrow: <b>{zuberki}</b>
       </p>
 
       <button className="duzy-przycisk" onClick={kupZubraGielda}>
-        Kup żubra
+        Kup zubra
       </button>
 
       <button className="duzy-przycisk" onClick={sprzedajZubraGielda}>
-        Sprzedaj żubra
+        Sprzedaj zubra
       </button>
 
-      <h2>Żuber Coiny</h2>
+      <h2>Zuber Coiny</h2>
       <p>Cena coina: {cena_coina}</p>
-      <p>Ilość coinów: {iloscCoinow}</p>
+      <p>Ilosc coinow: {iloscCoinow}</p>
 
       <button className="duzy-przycisk" onClick={kupCoina}>
         Kup coina
