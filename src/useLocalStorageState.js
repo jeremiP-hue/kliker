@@ -24,3 +24,6 @@ export const ustawLocalStorage = (nazwa, wartosc) => {
     console.error(`Nie udalo sie zapisac ${nazwa} w localStorage.`, error);
   }
 };
+export const usunlocalStorydge = () => {
+  localStorage.clear()
+}
