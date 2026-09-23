@@ -119,7 +119,8 @@ const GameView = ({
       {/* 3) ARENA = miejsce, gdzie latają emoji */}
       <div className="sekcja-areny">
         <div className="arena-glowna">
-          {zubry.map((z) => (
+
+          {zubry.slice(0, 1000).map((z) => (
             <span
               key={z.id}
               className="ikona-zubra"
@@ -128,6 +129,7 @@ const GameView = ({
               🐂
             </span>
           ))}
+
         </div>
 
         <div className="panel-timera">
